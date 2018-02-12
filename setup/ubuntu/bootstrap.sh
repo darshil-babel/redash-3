@@ -60,7 +60,7 @@ extract_redash_sources() {
 setup_env_file() {
     # Default config file
     if [ ! -f "$REDASH_BASE_PATH/.env" ]; then
-        cp "$ANALYSE_ETHER_REPO_NAME/$FILES_BASE_URL/env" "$REDASH_BASE_PATH/.env"
+        cp "$ANALYSE_ETHER_CURRENT_REPO/$FILES_BASE_URL/env" "$REDASH_BASE_PATH/.env"
     fi
 
     COOKIE_SECRET=$(pwgen -1s 32)
@@ -93,13 +93,13 @@ npm_build() {
 }
 
 setup_supervisor() {
-    cp "$ANALYSE_ETHER_REPO_NAME/$FILES_BASE_URL/supervisord.conf" /etc/supervisor/conf.d/redash.conf
+    cp "$ANALYSE_ETHER_CURRENT_REPO/$FILES_BASE_URL/supervisord.conf" /etc/supervisor/conf.d/redash.conf
     service supervisor restart
 }
 
 setup_nginx() {
     rm /etc/nginx/sites-enabled/default
-    cp "$ANALYSE_ETHER_REPO_NAME/$FILES_BASE_URL/nginx_redash_site" /etc/nginx/sites-available/redash
+    cp "$ANALYSE_ETHER_CURRENT_REPO/$FILES_BASE_URL/nginx_redash_site" /etc/nginx/sites-available/redash
     ln -nfs /etc/nginx/sites-available/redash /etc/nginx/sites-enabled/redash
     service nginx restart
 }
