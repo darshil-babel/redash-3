@@ -49,4 +49,4 @@ You can try out the demo instance: http://demo.redash.io/ (login with any Google
 
 BSD-2-Clause.
 
-test
+test2
