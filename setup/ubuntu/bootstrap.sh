@@ -1,21 +1,18 @@
 #!/bin/bash
 #
-# This script setups Redash along with supervisor, nginx, PostgreSQL and Redis. It was written to be used on 
+# This script setups Redash along with supervisor, nginx, PostgreSQL and Redis. It was written to be used on
 # Ubuntu 16.04. Technically it can work with other Ubuntu versions, but you might get non compatible versions
 # of PostgreSQL, Redis and maybe some other dependencies.
 #
-# This script is not idempotent and if it stops in the middle, you can't just run it again. You should either 
+# This script is not idempotent and if it stops in the middle, you can't just run it again. You should either
 # understand what parts of it to exclude or just start over on a new VM (assuming you're using a VM).
 
 set -eu
 
 REDASH_BASE_PATH=/opt/redash
-REDASH_BRANCH="${REDASH_BRANCH:-master}" # Default branch/version to master if not specified in REDASH_BRANCH env var
-REDASH_VERSION=${REDASH_VERSION-2.0.1.b3080} # Install latest version if not specified in REDASH_VERSION env var
-LATEST_URL="https://s3.amazonaws.com/redash-releases/redash.${REDASH_VERSION}.tar.gz"
-VERSION_DIR="$REDASH_BASE_PATH/redash.${REDASH_VERSION}"
-REDASH_TARBALL=/tmp/redash.tar.gz
-FILES_BASE_URL=https://raw.githubusercontent.com/getredash/redash/${REDASH_BRANCH}/setup/ubuntu/files
+ANALYSE_ETHER_REPO_NAME=redash-3
+ANALYSE_ETHER_CURRENT_REPO=$REDASH_BASE_PATH/$ANALYSE_ETHER_REPO_NAME
+FILES_BASE_URL=setup/ubuntu/files
 
 cd /tmp/
 
@@ -47,27 +44,29 @@ install_system_packages() {
     # Storage servers
     apt install -y postgresql redis-server
     apt install -y supervisor
-}
-
-create_directories() {
-    mkdir -p $REDASH_BASE_PATH
-    chown redash $REDASH_BASE_PATH
-    
-    # Default config file
-    if [ ! -f "$REDASH_BASE_PATH/.env" ]; then
-        sudo -u redash wget "$FILES_BASE_URL/env" -O $REDASH_BASE_PATH/.env
-    fi
-
-    COOKIE_SECRET=$(pwgen -1s 32)
-    echo "export REDASH_COOKIE_SECRET=$COOKIE_SECRET" >> $REDASH_BASE_PATH/.env
+    apt-get install -y npm nodejs-legacy
 }
 
 extract_redash_sources() {
-    sudo -u redash wget "$LATEST_URL" -O "$REDASH_TARBALL"
-    sudo -u redash mkdir "$VERSION_DIR"
-    sudo -u redash tar -C "$VERSION_DIR" -xvf "$REDASH_TARBALL"
-    ln -nfs "$VERSION_DIR" $REDASH_BASE_PATH/current
-    ln -nfs $REDASH_BASE_PATH/.env $REDASH_BASE_PATH/current/.env
+    mkdir -p "$REDASH_BASE_PATH"
+    chown redash "$REDASH_BASE_PATH"
+
+    gcloud source repos clone "$ANALYSE_ETHER_REPO_NAME"
+    mv "$ANALYSE_ETHER_REPO_NAME" "$ANALYSE_ETHER_CURRENT_REPO"
+    ln -nfs "$ANALYSE_ETHER_REPO_NAME" "$REDASH_BASE_PATH/current"
+
+}
+
+setup_env_file() {
+    # Default config file
+    if [ ! -f "$REDASH_BASE_PATH/.env" ]; then
+        cp "$ANALYSE_ETHER_REPO_NAME/$FILES_BASE_URL/env" "$REDASH_BASE_PATH/.env"
+    fi
+
+    COOKIE_SECRET=$(pwgen -1s 32)
+    echo "export REDASH_COOKIE_SECRET=$COOKIE_SECRET" >> "$REDASH_BASE_PATH/.env"
+
+    ln -nfs "$REDASH_BASE_PATH/.env" "$REDASH_BASE_PATH/current/.env"
 }
 
 install_python_packages() {
@@ -87,14 +86,20 @@ create_database() {
     sudo -u redash bin/run ./manage.py database create_tables
 }
 
+npm_build() {
+    cd $REDASH_BASE_PATH/current
+    npm install
+    npm run build
+}
+
 setup_supervisor() {
-    wget -O /etc/supervisor/conf.d/redash.conf "$FILES_BASE_URL/supervisord.conf"
+    cp "$ANALYSE_ETHER_REPO_NAME/$FILES_BASE_URL/supervisord.conf" /etc/supervisor/conf.d/redash.conf
     service supervisor restart
 }
 
 setup_nginx() {
     rm /etc/nginx/sites-enabled/default
-    wget -O /etc/nginx/sites-available/redash "$FILES_BASE_URL/nginx_redash_site"
+    cp "$ANALYSE_ETHER_REPO_NAME/$FILES_BASE_URL/nginx_redash_site" /etc/nginx/sites-available/redash
     ln -nfs /etc/nginx/sites-available/redash /etc/nginx/sites-enabled/redash
     service nginx restart
 }
@@ -102,9 +107,12 @@ setup_nginx() {
 verify_root
 install_system_packages
 create_redash_user
-create_directories
 extract_redash_sources
+setup_env_file
 install_python_packages
 create_database
+npm_build
 setup_supervisor
 setup_nginx
+
+sudo supervisorctl restart all
