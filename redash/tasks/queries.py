@@ -167,7 +167,7 @@ class QueryTask(object):
         status = self.STATUSES[task_status]
 
         if isinstance(result, (TimeLimitExceeded, SoftTimeLimitExceeded)):
-            error = "Query exceeded Redash query execution time limit."
+            error = "Query exceeded execution time limit."
             status = 4
         elif isinstance(result, Exception):
             error = result.message

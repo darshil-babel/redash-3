@@ -23,7 +23,7 @@ var config = {
     }
   },
   plugins: [
-    new WebpackBuildNotifierPlugin({title: 'Redash'}),
+    new WebpackBuildNotifierPlugin({title: 'Analyse Ether'}),
     new webpack.DefinePlugin({
       ON_TEST: process.env.NODE_ENV === 'test'
     }),

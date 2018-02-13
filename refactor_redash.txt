@@ -1,0 +1,37 @@
+./webpack.config.js:26:    new WebpackBuildNotifierPlugin({title: 'Redash'}),
+./client/app/components/queries/visualization-embed.html:24:      <a class="btn btn-default btn-xs" ng-href="queries/{{$ctrl.query.id}}#{{$ctrl.visualization.id}}" target="_blank" tooltip="Open in Redash">
+./client/app/components/footer/footer.html:2:    <span>built using </span> <a href="http://redash.io">Redash</a>
+./client/app/multi_org.html:7:    <title>Redash</title>
+./client/app/pages/home/index.js:33:      title: 'Redash',
+./client/app/pages/queries/query.html:4:    href="queries">browse existing queries</a>, or ask for additional permissions from your Redash admin.
+./client/app/pages/queries/query.html:15:    your Redash admin to create one first.
+./client/app/pages/queries/view.js:292:      Notifications.showNotification('Redash', `${$scope.query.name} updated.`);
+./client/app/pages/queries/view.js:294:      Notifications.showNotification('Redash', `${$scope.query.name} failed to run:
+ ${$scope.queryResult.getError()}`);
+./client/app/index.html:7:    <title>Redash</title>
+./client/app/directives/index.js:40:    title: 'Redash',
+./redash/templates/footer.html:2:    <span>built using </span> <a href="http://redash.io">Redash</a>
+./redash/templates/invite.html:5:<h2>Welcome to Redash!</h2>
+./redash/templates/login.html:2:{% block title %}Login | Redash{% endblock %}
+./redash/templates/emails/invite.html:8:    invited you to join the Redash account of {{ org.name }}.
+./redash/templates/emails/invite.html:16:    Your Redash account is: <a href="{{ url_for('redash.index', org_slug=org.slug, _external=True) }}" target="_blank" style="border: none; color: #1251BA; outline: none !important">{{ url_for('redash.index', org_slug=org.slug, _external=True) }}</a>
+./redash/templates/emails/invite.txt:3:{{ inviter.name }} ({{inviter.email}}) invited you to join the Redash account of {{org.name}}.
+./redash/templates/emails/invite.txt:10:Your Redash account: {{ url_for('redash.index', org_slug=org.slug, _external=True) }}
+./redash/templates/setup.html:3:{% block title %}Redash Initial Setup{% endblock %}
+./redash/templates/setup.html:26:        Welcome to Redash!<br/><small>Before you can use your instance, you need to do a quick setup.</small>
+./redash/admin.py:68:    admin = Admin(app, name='Redash Admin', template_mode='bootstrap3')
+./redash/tasks/queries.py:170:            error = "Query exceeded Redash query execution time limit."
+./redash/authentication/account.py:42:    subject = u"{} invited you to join Redash".format(inviter.name)
+
+------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+

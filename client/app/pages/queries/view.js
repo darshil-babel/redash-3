@@ -289,9 +289,9 @@ function QueryViewCtrl(
       $scope.query.latest_query_data_id = $scope.queryResult.getId();
       $scope.query.queryResult = $scope.queryResult;
 
-      Notifications.showNotification('Redash', `${$scope.query.name} updated.`);
+      Notifications.showNotification('Analyse Ether', `${$scope.query.name} updated.`);
     } else if (status === 'failed') {
-      Notifications.showNotification('Redash', `${$scope.query.name} failed to run: ${$scope.queryResult.getError()}`);
+      Notifications.showNotification('Analyse Ether', `${$scope.query.name} failed to run: ${$scope.queryResult.getError()}`);
     }
 
     if (status === 'done' || status === 'failed') {

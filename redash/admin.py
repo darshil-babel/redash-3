@@ -65,7 +65,7 @@ class DashboardModelView(BaseModelView):
 
 
 def init_admin(app):
-    admin = Admin(app, name='Redash Admin', template_mode='bootstrap3')
+    admin = Admin(app, name='Analyse Ether Admin', template_mode='bootstrap3')
 
     admin.add_view(QueryModelView(models.Query, models.db.session))
     admin.add_view(QueryResultModelView(models.QueryResult, models.db.session))

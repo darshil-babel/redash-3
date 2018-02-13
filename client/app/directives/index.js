@@ -37,7 +37,7 @@ function autofocus($timeout) {
 
 function TitleService($rootScope) {
   const Title = {
-    title: 'Redash',
+    title: 'Analyse Ether',
     set(newTitle) {
       this.title = newTitle;
       $rootScope.$broadcast('$titleChange');
