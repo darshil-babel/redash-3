@@ -11,7 +11,7 @@ Query, visualize and share analysis of ethereum transactions.
 2. **Dashboards**: Visualize multiple queries into coherent dashboards, choose from bar charts, pie charts, scatter and bubble graphs.  
 [![Alt text](https://img.youtube.com/vi/7hbmSz9luoU/0.jpg)](https://www.youtube.com/watch?v=7hbmSz9luoU)
 
-3. **Share**: Share your analysis to earn a portion of the ad-revenue or create real-time alerts and share it with your slack or email groups. 
+3. **Share**: Share your analysis to earn a portion of the ad-revenue or create real-time alerts and share it with your slack or email groups.    
 [![Alt text](https://img.youtube.com/vi/Bha3i_bXD1g/0.jpg)](https://www.youtube.com/watch?v=Bha3i_bXD1g)
 
 ## License
