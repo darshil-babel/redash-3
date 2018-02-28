@@ -1,7 +1,8 @@
 .cache
 .coverage.*
 .coveralls.yml
-.idea
+env/
+.idea/
 *.pyc
 .coverage
 coverage.xml
