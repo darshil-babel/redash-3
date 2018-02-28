@@ -2,7 +2,7 @@
 .coverage.*
 .coveralls.yml
 env/
-.idea
+.idea/
 *.pyc
 .coverage
 coverage.xml
