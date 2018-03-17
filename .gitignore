@@ -1,6 +1,7 @@
 .cache
 .coverage.*
 .coveralls.yml
+.ropeproject/
 env/
 .idea/
 *.pyc
