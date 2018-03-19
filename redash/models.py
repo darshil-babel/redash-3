@@ -774,19 +774,29 @@ class QueryResultMetaData(db.Model):
     id = Column(db.Integer, primary_key=True)
     query_id = Column(db.Integer, db.ForeignKey('query.id'))
     query = db.relationship(Query)
+
     query_result_id = Column(db.Integer, db.ForeignKey('query_results.id'))
     query_results = db.relationship(QueryResult)
+
     data_consumed_mb = Column(postgresql.DOUBLE_PRECISION)
-        data_source_id = Column(db.Integer, db.ForeignKey("data_sources.id"))
-        data_source = db.relationship(DataSource, backref=backref('query_results'))
-        query_hash = Column(db.String(32), index=True)
-        query_text = Column('query', db.Text)
-        data = Column(db.Text)
-        runtime = Column(postgresql.DOUBLE_PRECISION)
-        retrieved_at = Column(db.DateTime(True))
+    data_source_id = Column(db.Integer, db.ForeignKey("data_sources.id"))
+    data_source = db.relationship(DataSource, backref=backref('query_results'))
+    query_hash = Column(db.String(32), index=True)
+    run_at = Column(db.DateTime(True))
 
-        __tablename__ = 'query_results'
+    __tablename__ = 'query_results_metadata'
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'query_id': self.query_id,
+            'query_results_id': self.query_result_id,
+            'data_consumed_mb': self.query_consumed_mb,
+            'data_source_id': self.data_source_id,
+            'query_hash': self.query_hash,
+            'run_at': self.run_at,
+            'status': self.status
+        }
 
 class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
     id = Column(db.Integer, primary_key=True)
