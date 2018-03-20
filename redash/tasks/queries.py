@@ -445,6 +445,8 @@ class QueryExecutor(object):
 
         try:
             data, data_consumed_mb, error = query_runner.run_query(annotated_query, self.user)
+            logging.debug('Consumed MB at queries {}'.format(data_consumed_mb))
+
         except Exception as e:
             error = unicode(e)
             data = None

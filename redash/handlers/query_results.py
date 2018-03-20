@@ -47,7 +47,8 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
     try:
         started_at = time.time()
         data, data_consumed_mb, error = data_source.query_runner.run_query(query_text, current_user)
-
+        logging.debug('Consumed MB at query_results {}'.format(data_consumed_mb))
+        
         if error:
             logging.info('got bak error')
             logging.info(error)
