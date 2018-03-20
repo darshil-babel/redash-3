@@ -208,7 +208,8 @@ class BigQuery(BaseQueryRunner):
             "rows": rows
         }
 
-        return data
+        data_consumed_mb = query_reply['totalBytesProcessed']/1024/1024
+        return data, data_consumed_mb
 
     def get_schema(self, get_stats=False):
         if not self.configuration.get('loadSchema', False):
@@ -241,7 +242,7 @@ class BigQuery(BaseQueryRunner):
                 if limitMB < processedMB:
                     return None, "Larger than %d MBytes will be processed (%f MBytes)" % (limitMB, processedMB)
 
-            data = self._get_query_result(jobs, query)
+            data, data_consumed_mb = self._get_query_result(jobs, query)
             error = None
 
             json_data = json.dumps(data, cls=JSONEncoder)
@@ -257,7 +258,7 @@ class BigQuery(BaseQueryRunner):
         except Exception:
             raise sys.exc_info()[1], None, sys.exc_info()[2]
 
-        return json_data, error
+        return json_data, data_consumed_mb, error
 
 
 class BigQueryGCE(BigQuery):
