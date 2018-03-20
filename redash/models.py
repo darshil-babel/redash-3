@@ -381,7 +381,7 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
                      default=lambda: generate_token(40),
                      unique=True)
     last_logged_at = Column(db.DateTime(True), default=db.func.now(),
-                            onupdate=db.func.now())
+                            onupdate=db.func.now(), nullable=True)
 
     __tablename__ = 'users'
     __table_args__ = (db.Index('users_org_id_email', 'org_id', 'email', unique=True),)
