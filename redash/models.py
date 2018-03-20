@@ -775,7 +775,7 @@ def should_schedule_next(previous_iteration, now, schedule, failures):
 
 class QueryResultMetaData(db.Model):
     id = Column(db.Integer, primary_key=True)
-    updated_query_ids = Column(db.String(128), db.ForeignKey('queries.id'))
+    updated_query_ids = Column(db.String(128))
     query_result_id = Column(db.Integer, db.ForeignKey('query_results.id'))
     data_consumed_mb = Column(postgresql.DOUBLE_PRECISION)
     data_source_id = Column(db.Integer, db.ForeignKey("data_sources.id"))
