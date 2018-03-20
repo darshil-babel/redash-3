@@ -444,7 +444,7 @@ class QueryExecutor(object):
         annotated_query = self._annotate_query(query_runner)
 
         try:
-            data, error = query_runner.run_query(annotated_query, self.user)
+            data, data_consumed_mb, error = query_runner.run_query(annotated_query, self.user)
         except Exception as e:
             error = unicode(e)
             data = None
@@ -475,6 +475,13 @@ class QueryExecutor(object):
             self._log_progress('checking_alerts')
             for query_id in updated_query_ids:
                 check_alerts_for_query.delay(query_id)
+            query_result_metadata = models.QueryResultMetaData.store_result_metadata(
+                                            updated_query_ids=updated_query_ids,
+                                            query_results_id=query_result.id,
+                                            data_consumed_mb=data_consumed_mb,
+                                            data_source_id=self.data_source.id,
+                                            query_hash=self.query_hash,
+                                            run_at=utils.utcnow())
             self._log_progress('finished')
 
             result = query_result.id

@@ -45,7 +45,7 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
 
     try:
         started_at = time.time()
-        data, error = data_source.query_runner.run_query(query_text, current_user)
+        data, data_consumed_mb, error = data_source.query_runner.run_query(query_text, current_user)
 
         if error:
             return None
@@ -55,7 +55,12 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
             query_result, updated_query_ids = models.QueryResult.store_result(data_source.org_id, data_source.id,
                                                                               query_hash, query_text, data,
                                                                               run_time, utils.utcnow())
-
+            query_result_metadata = models.QueryResultMetaData.store_result_metadata(updated_query_ids=updated_query_ids,
+                                            query_results_id=query_result.id,
+                                            data_consumed_mb=data_consumed_mb,
+                                            data_source_id=data_source.id,
+                                            query_hash=query_hash,
+                                            run_at=utils.utcnow())
             models.db.session.commit()
         return data
     except Exception:
