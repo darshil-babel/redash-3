@@ -775,8 +775,7 @@ def should_schedule_next(previous_iteration, now, schedule, failures):
 
 class QueryResultMetaData(db.Model):
     id = Column(db.Integer, primary_key=True)
-    query_id = Column(db.Integer, db.ForeignKey('queries.id'))
-
+    updated_query_ids = Column(db.String(128), db.ForeignKey('queries.id'))
     query_result_id = Column(db.Integer, db.ForeignKey('query_results.id'))
     data_consumed_mb = Column(postgresql.DOUBLE_PRECISION)
     data_source_id = Column(db.Integer, db.ForeignKey("data_sources.id"))
@@ -788,14 +787,26 @@ class QueryResultMetaData(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'query_id': self.query_id,
+            'updated_query_ids': self.updated_query_ids,
             'query_results_id': self.query_result_id,
             'data_consumed_mb': self.query_consumed_mb,
             'data_source_id': self.data_source_id,
             'query_hash': self.query_hash,
-            'run_at': self.run_at,
-            'status': self.status
+            'run_at': self.run_at
         }
+
+    @classmethod
+    def store_result_metadata(cls, updated_query_ids, query_results_id,
+                              data_consumed_mb, data_source_id, query_hash, run_at):
+        query_result_metadata = cls(updated_query_ids=updated_query_ids,
+                                    query_results_id=query_results_id,
+                                    data_consumed_mb=data_consumed_mb,
+                                    data_source_id=data_source_id,
+                                    query_hash=query_hash,
+                                    run_at=run_at)
+        db.session.add(query_result_metadata)
+        return query_result_metadata
+
 
 class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
     id = Column(db.Integer, primary_key=True)
