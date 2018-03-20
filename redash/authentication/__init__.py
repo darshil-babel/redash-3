@@ -2,6 +2,7 @@ from flask_login import LoginManager, user_logged_in
 import hashlib
 import hmac
 import time
+from datetime import datetime
 import logging
 
 from flask import redirect, request, jsonify, url_for
@@ -123,6 +124,9 @@ def log_user_logged_in(app, user):
         'user_agent': request.user_agent.string,
         'ip': request.remote_addr
     }
+    user.last_logged_at = datetime.now()
+    models.db.session.add(user)
+    models.db.session.commit()
 
     record_event.delay(event)
 
