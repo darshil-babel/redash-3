@@ -122,6 +122,7 @@ def create_app(load_admin=True):
 
     # configure our database
     app.config['SQLALCHEMY_DATABASE_URI'] = settings.SQLALCHEMY_DATABASE_URI
+    app.debug = True
     app.config.update(settings.all_settings())
 
     provision_app(app)
