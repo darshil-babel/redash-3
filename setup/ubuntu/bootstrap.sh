@@ -51,9 +51,8 @@ install_system_packages() {
 extract_redash_sources() {
     mkdir -p "$REDASH_BASE_PATH"
     chown redash "$REDASH_BASE_PATH"
-
+    cd "$REDASH_BASE_PATH"
     git clone $ANALYSE_ETHER_REPO_GIT
-    mv "$ANALYSE_ETHER_REPO_NAME" "$ANALYSE_ETHER_CURRENT_REPO"
     ln -nfs "$ANALYSE_ETHER_REPO_NAME" "$REDASH_BASE_PATH/current"
 
 }
@@ -67,7 +66,7 @@ setup_env_file() {
     COOKIE_SECRET=$(pwgen -1s 32)
     echo "export REDASH_COOKIE_SECRET=$COOKIE_SECRET" >> "$REDASH_BASE_PATH/.env"
     # set the database url before hand
-    echo "export REDASH_DATABASE_URL=$DATABASE_URL" >> "$REDASH_BASE_PATH/.env"
+  #  echo "export REDASH_DATABASE_URL=$DATABASE_URL" >> "$REDASH_BASE_PATH/.env"
 
     ln -nfs "$REDASH_BASE_PATH/.env" "$REDASH_BASE_PATH/current/.env"
 }
@@ -84,8 +83,8 @@ install_python_packages() {
 # We now use an external RDS for scalability: https://discuss.redash.io/t/walkthrough-for-using-rds-as-a-backend/18/2
 create_database() {
     # Create user and database
-#    sudo -u postgres createuser redash --no-superuser --no-createdb --no-createrole
-#    sudo -u postgres createdb redash --owner=redash
+    sudo -u postgres createuser redash --no-superuser --no-createdb --no-createrole
+    sudo -u postgres createdb redash --owner=redash
 
     cd $REDASH_BASE_PATH/current
     sudo -u redash bin/run ./manage.py database create_tables
