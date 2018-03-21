@@ -4,6 +4,7 @@ import hmac
 import time
 from datetime import datetime
 import logging
+import pytz
 
 from flask import redirect, request, jsonify, url_for
 
@@ -124,7 +125,9 @@ def log_user_logged_in(app, user):
         'user_agent': request.user_agent.string,
         'ip': request.remote_addr
     }
-    user.last_logged_at = datetime.now()
+    logging.debug("Old value of last_logged_at %s", user.last_logged_at)
+    logging.debug("New value of last_logged_at %s", datetime.now(pytz.UTC))
+    user.last_logged_at = datetime.now(pytz.UTC)
     models.db.session.add(user)
     models.db.session.commit()
 
