@@ -51,9 +51,9 @@ install_system_packages() {
 extract_redash_sources() {
     mkdir -p "$REDASH_BASE_PATH"
     chown redash "$REDASH_BASE_PATH"
-
+    cd "$REDASH_BASE_PATH"
     git clone $ANALYSE_ETHER_REPO_GIT
-    mv "$ANALYSE_ETHER_REPO_NAME" "$ANALYSE_ETHER_CURRENT_REPO"
+
     ln -nfs "$ANALYSE_ETHER_REPO_NAME" "$REDASH_BASE_PATH/current"
 
 }
