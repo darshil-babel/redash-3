@@ -380,6 +380,7 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
     api_key = Column(db.String(40),
                      default=lambda: generate_token(40),
                      unique=True)
+    last_logged_at = Column(db.DateTime(True), nullable=True)
 
     __tablename__ = 'users'
     __table_args__ = (db.Index('users_org_id_email', 'org_id', 'email', unique=True),)
@@ -395,7 +396,8 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
             'gravatar_url': self.gravatar_url,
             'groups': self.group_ids,
             'updated_at': self.updated_at,
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'last_logged_at': self.last_logged_at
         }
 
         if self.password_hash is None:
