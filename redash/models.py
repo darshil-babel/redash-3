@@ -779,7 +779,7 @@ class QueryResultMetaData(db.Model):
     data_consumed_mb = Column(postgresql.DOUBLE_PRECISION)
     data_source_id = Column(db.Integer, db.ForeignKey("data_sources.id"))
     query_hash = Column(db.String(32), index=True)
-    run_by_user_id = Column(db.Integer, db.ForeignKey('users.id'))
+    run_by_user_id = Column(db.Integer, db.ForeignKey('users.id'), nullable = True)
     run_at = Column(db.DateTime(True))
 
     __tablename__ = 'query_results_metadata'
