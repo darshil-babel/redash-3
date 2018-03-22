@@ -208,7 +208,10 @@ class BigQuery(BaseQueryRunner):
             "rows": rows
         }
 
-        return data
+        data_consumed_mb = query_reply['totalBytesProcessed']/1024/1024
+        logging.debug('Consumed MB at big_query {}'.format(data_consumed_mb))
+
+        return data, data_consumed_mb
 
     def get_schema(self, get_stats=False):
         if not self.configuration.get('loadSchema', False):
