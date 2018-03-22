@@ -445,9 +445,12 @@ class QueryExecutor(object):
 
         try:
             data, error = query_runner.run_query(annotated_query, self.user)
+            dict_data = json.loads(data)
+            data_consumed_mb = dict_data['data_consumed_mb']
         except Exception as e:
             error = unicode(e)
             data = None
+            data_consumed_mb = 0
             logging.warning('Unexpected error while running query:', exc_info=1)
 
         run_time = time.time() - self.tracker.started_at
@@ -472,6 +475,13 @@ class QueryExecutor(object):
                 self.data_source.org, self.data_source,
                 self.query_hash, self.query, data,
                 run_time, utils.utcnow())
+            query_result_metadata = models.QueryResultMetaData.store_result_metadata(
+                                            updated_query_ids=updated_query_ids,
+                                            query_results_id=query_result.id,
+                                            data_consumed_mb=data_consumed_mb,
+                                            data_source_id=self.data_source.id,
+                                            query_hash=self.query_hash,
+                                            run_at=utils.utcnow())
             self._log_progress('checking_alerts')
             for query_id in updated_query_ids:
                 check_alerts_for_query.delay(query_id)

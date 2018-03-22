@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import logging
 import time
+import json
 
 import pystache
 from flask import request
@@ -48,13 +49,25 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
         data, error = data_source.query_runner.run_query(query_text, current_user)
 
         if error:
+            data_consumed_mb = 0
             return None
+        else:
+            dict_data = json.loads(data)
+            data_consumed_mb = dict_data['data_consumed_mb']
+
         # update cache
         if max_age > 0:
             run_time = time.time() - started_at
             query_result, updated_query_ids = models.QueryResult.store_result(data_source.org_id, data_source.id,
                                                                               query_hash, query_text, data,
                                                                               run_time, utils.utcnow())
+            query_result_metadata = models.QueryResultMetaData.store_result_metadata(
+                                        updated_query_ids=updated_query_ids,
+                                        query_results_id=query_result.id,
+                                        data_consumed_mb=data_consumed_mb,
+                                        data_source_id=data_source.id,
+                                        query_hash=query_hash,
+                                        run_at=utils.utcnow())
 
             models.db.session.commit()
         return data

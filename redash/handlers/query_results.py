@@ -52,11 +52,22 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
             logging.info('got bak error')
             logging.info(error)
             return None
+            data_consumed_mb = 0
+        else:
+            dict_data = json.loads(data)
+            data_consumed_mb = dict_data['data_consumed_mb']
 
         run_time = time.time() - started_at
         query_result, updated_query_ids = models.QueryResult.store_result(data_source.org, data_source,
                                                                               query_hash, query_text, data,
                                                                               run_time, utils.utcnow())
+        query_result_metadata = models.QueryResultMetaData.store_result_metadata(
+                                    updated_query_ids=updated_query_ids,
+                                    query_results_id=query_result.id,
+                                    data_consumed_mb=data_consumed_mb,
+                                    data_source_id=data_source.id,
+                                    query_hash=query_hash,
+                                    run_at=utils.utcnow())
 
         models.db.session.commit()
         return query_result
@@ -194,7 +205,7 @@ class QueryResultResource(BaseResource):
                     query_result = run_query_sync(query.data_source, parameter_values, query.to_dict()['query'], max_age=max_age)
                 elif query.latest_query_data_id is not None:
                     query_result = get_object_or_404(models.QueryResult.get_by_id_and_org, query.latest_query_data_id, self.current_org)
-                
+
             if query is not None and query_result is not None and self.current_user.is_api_user():
                 if query.query_hash != query_result.query_hash:
                     abort(404, message='No cached result found for this query.')
