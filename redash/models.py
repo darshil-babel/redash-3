@@ -779,6 +779,7 @@ class QueryResultMetaData(db.Model):
     data_consumed_mb = Column(postgresql.DOUBLE_PRECISION)
     data_source_id = Column(db.Integer, db.ForeignKey("data_sources.id"))
     query_hash = Column(db.String(32), index=True)
+    run_by_user_id = Column(db.Integer, db.ForeignKey('users.id'))
     run_at = Column(db.DateTime(True))
 
     __tablename__ = 'query_results_metadata'
@@ -791,17 +792,20 @@ class QueryResultMetaData(db.Model):
             'data_consumed_mb': self.query_consumed_mb,
             'data_source_id': self.data_source_id,
             'query_hash': self.query_hash,
+            'run_by_user_id': self.run_by_user_id,
             'run_at': self.run_at
         }
 
     @classmethod
     def store_result_metadata(cls, updated_query_ids, query_result_id,
-                              data_consumed_mb, data_source_id, query_hash, run_at):
+                              data_consumed_mb, data_source_id, query_hash,
+                              run_by_user_id, run_at):
         query_result_metadata = cls(updated_query_ids=updated_query_ids,
                                     query_result_id=query_result_id,
                                     data_consumed_mb=data_consumed_mb,
                                     data_source_id=data_source_id,
                                     query_hash=query_hash,
+                                    run_by_user_id=run_by_user_id,
                                     run_at=run_at)
         db.session.add(query_result_metadata)
         return query_result_metadata
