@@ -67,6 +67,7 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
                                         data_consumed_mb=data_consumed_mb,
                                         data_source_id=data_source.id,
                                         query_hash=query_hash,
+                                        run_by_user_id=current_user.id,
                                         run_at=utils.utcnow())
 
             models.db.session.commit()

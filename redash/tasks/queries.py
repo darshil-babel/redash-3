@@ -481,6 +481,7 @@ class QueryExecutor(object):
                                             data_consumed_mb=data_consumed_mb,
                                             data_source_id=self.data_source.id,
                                             query_hash=self.query_hash,
+                                            run_by_user_id=self.user.id,
                                             run_at=utils.utcnow())
             self._log_progress('checking_alerts')
             for query_id in updated_query_ids:
