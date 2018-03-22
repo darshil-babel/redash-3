@@ -1,6 +1,5 @@
 import datetime
 import json
-import logging
 import sys
 import time
 from base64 import b64decode
@@ -10,9 +9,8 @@ import requests
 
 from redash import settings
 from redash.query_runner import *
+from redash.query_runner import logger
 from redash.utils import JSONEncoder
-
-logger = logging.getLogger(__name__)
 
 try:
     import apiclient.errors
@@ -70,7 +68,7 @@ def _load_key(filename):
 
 def _get_query_results(jobs, project_id, job_id, start_index):
     query_reply = jobs.getQueryResults(projectId=project_id, jobId=job_id, startIndex=start_index).execute()
-    logging.debug('query_reply %s', query_reply)
+    logger.debug('query_reply %s', query_reply)
     if not query_reply['jobComplete']:
         time.sleep(10)
         return _get_query_results(jobs, project_id, job_id, start_index)
@@ -208,8 +206,8 @@ class BigQuery(BaseQueryRunner):
             "rows": rows
         }
 
-        data_consumed_mb = query_reply['totalBytesProcessed']/1024/1024
-        logging.debug('Consumed MB at big_query {}'.format(data_consumed_mb))
+        data_consumed_mb = int(query_reply['totalBytesProcessed'])/1024.0/1024.0
+        logger.debug('Consumed MB at big_query %d', data_consumed_mb)
 
         return data, data_consumed_mb
 
