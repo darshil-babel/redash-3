@@ -477,7 +477,7 @@ class QueryExecutor(object):
                 run_time, utils.utcnow())
             query_result_metadata = models.QueryResultMetaData.store_result_metadata(
                                             updated_query_ids=updated_query_ids,
-                                            query_results_id=query_result.id,
+                                            query_result_id=query_result.id,
                                             data_consumed_mb=data_consumed_mb,
                                             data_source_id=self.data_source.id,
                                             query_hash=self.query_hash,

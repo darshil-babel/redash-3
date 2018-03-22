@@ -787,7 +787,7 @@ class QueryResultMetaData(db.Model):
         return {
             'id': self.id,
             'updated_query_ids': self.updated_query_ids,
-            'query_results_id': self.query_result_id,
+            'query_result_id': self.query_result_id,
             'data_consumed_mb': self.query_consumed_mb,
             'data_source_id': self.data_source_id,
             'query_hash': self.query_hash,
@@ -795,10 +795,10 @@ class QueryResultMetaData(db.Model):
         }
 
     @classmethod
-    def store_result_metadata(cls, updated_query_ids, query_results_id,
+    def store_result_metadata(cls, updated_query_ids, query_result_id,
                               data_consumed_mb, data_source_id, query_hash, run_at):
         query_result_metadata = cls(updated_query_ids=updated_query_ids,
-                                    query_results_id=query_results_id,
+                                    query_result_id=query_result_id,
                                     data_consumed_mb=data_consumed_mb,
                                     data_source_id=data_source_id,
                                     query_hash=query_hash,

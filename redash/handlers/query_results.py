@@ -63,7 +63,7 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
                                                                               run_time, utils.utcnow())
         query_result_metadata = models.QueryResultMetaData.store_result_metadata(
                                     updated_query_ids=updated_query_ids,
-                                    query_results_id=query_result.id,
+                                    query_result_id=query_result.id,
                                     data_consumed_mb=data_consumed_mb,
                                     data_source_id=data_source.id,
                                     query_hash=query_hash,
