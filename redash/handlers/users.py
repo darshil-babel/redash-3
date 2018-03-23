@@ -31,7 +31,9 @@ class UserListResource(BaseResource):
         user = models.User(org=self.current_org,
                            name=req['name'],
                            email=req['email'],
-                           group_ids=[self.current_org.default_group.id])
+                           group_ids=[self.current_org.default_group.id],
+                           usage_limit_mb=2.0*1024.0*1024.0,
+                           total_data_consumed_mb=0.0)
 
         try:
             models.db.session.add(user)
@@ -131,5 +133,3 @@ class UserResource(BaseResource):
         })
 
         return user.to_dict(with_api_key=is_admin_or_owner(user_id))
-
-

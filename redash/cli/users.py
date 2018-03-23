@@ -81,7 +81,9 @@ def create(email, name, groups, is_admin=False, google_auth=False,
     org = models.Organization.get_by_slug(organization)
     groups = build_groups(org, groups, is_admin)
 
-    user = models.User(org=org, email=email, name=name, group_ids=groups)
+    user = models.User(org=org, email=email, name=name, group_ids=groups,
+                       usage_limit_mb=2.0*1024.0*1024.0,
+                       total_data_consumed_mb=0.0)
     if not password and not google_auth:
         password = prompt("Password", hide_input=True,
                           confirmation_prompt=True)

@@ -67,9 +67,13 @@ def create_and_login_user(org, name, email):
             models.db.session.commit()
     except NoResultFound:
         logger.debug("Creating user object (%r)", name)
-        user_object = models.User(org=org, name=name, email=email, group_ids=[org.default_group.id])
+        user_object = models.User(org=org, name=name, email=email,
+                                  group_ids=[org.default_group.id],
+                                  usage_limit_mb=2.0*1024.0*1024.0,
+                                  total_data_consumed_mb=0.0)
         models.db.session.add(user_object)
         models.db.session.commit()
+
 
     login_user(user_object, remember=True)
 
