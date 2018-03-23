@@ -436,11 +436,6 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
         return self.usage_limit_mb - self.total_data_consumed_mb
 
     @classmethod
-    def update_total_data_consumed(cls, data_consumed_mb):
-        cls.total_data_consumed_mb = cls.total_data_consumed_mb+data_consumed_mb
-        return cls
-
-    @classmethod
     def get_by_email_and_org(cls, email, org):
         return cls.query.filter(cls.email == email, cls.org == org).one()
 
@@ -469,6 +464,13 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
         groups = Group.find_by_name(self.org, group_names)
         groups.append(self.org.default_group)
         self.group_ids = [g.id for g in groups]
+        db.session.add(self)
+
+    def update_total_data_consumed(self, data_consumed_mb):
+        self.total_data_consumed_mb = self.total_data_consumed_mb+data_consumed_mb
+
+    def update_data_usage_limit(self, new_data_usage_limit):
+        self.usage_limit_mb = new_data_usage_limit
         db.session.add(self)
 
     def has_access(self, obj, access_type):
