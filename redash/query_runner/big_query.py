@@ -201,11 +201,10 @@ class BigQuery(BaseQueryRunner):
                     'friendly_name': f["name"],
                     'type': types_map.get(f['type'], "string")} for f in query_reply["schema"]["fields"]]
 
-        data_consumed_mb = int(query_reply['totalBytesProcessed'])/1024.0/1024.0
         data = {
             "columns": columns,
             "rows": rows,
-            'data_consumed_mb': int(query_reply['totalBytesProcessed'])/1024.0/1024.0
+            'metadata': {'data_scanned': int(query_reply['totalBytesProcessed'])}
         }
 
         return data
