@@ -382,9 +382,9 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
                      unique=True)
     last_logged_at = Column(db.DateTime(True), nullable=True)
     usage_limit_mb = Column(postgresql.BIGINT, default=2.0*1024.0*1024.0,
-                            nullable=False)
+                            nullable=True)
     total_data_consumed_mb = Column(postgresql.DOUBLE_PRECISION, default=0.0,
-                              nullable=False)
+                                    nullable=True)
 
     __tablename__ = 'users'
     __table_args__ = (db.Index('users_org_id_email', 'org_id', 'email', unique=True),)
