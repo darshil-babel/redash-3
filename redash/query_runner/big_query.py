@@ -205,7 +205,7 @@ class BigQuery(BaseQueryRunner):
         data = {
             "columns": columns,
             "rows": rows,
-            'data_consumed_mb': data_consumed_mb
+            'data_consumed_mb': int(query_reply['totalBytesProcessed'])/1024.0/1024.0
         }
 
         return data
