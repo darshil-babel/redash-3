@@ -19,3 +19,14 @@ def drop_tables():
     from redash.models import db
 
     db.drop_all()
+
+
+@manager.command()
+def update_all_usage_limits():
+    """Updates all the usage limits in table users."""
+    from redash.models import db
+    users = db.User.query.all()
+
+    for user in users:
+        user.update_data_usage_limit(2.0*1024.0*1024.0)
+    db.session.commit()
