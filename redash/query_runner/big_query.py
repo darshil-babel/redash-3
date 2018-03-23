@@ -2,6 +2,7 @@ import datetime
 import json
 import sys
 import time
+import logging
 from base64 import b64decode
 
 import httplib2
@@ -9,7 +10,6 @@ import requests
 
 from redash import settings
 from redash.query_runner import *
-from redash.query_runner import logger
 from redash.utils import JSONEncoder
 
 try:
@@ -68,7 +68,7 @@ def _load_key(filename):
 
 def _get_query_results(jobs, project_id, job_id, start_index):
     query_reply = jobs.getQueryResults(projectId=project_id, jobId=job_id, startIndex=start_index).execute()
-    logger.debug('query_reply %s', query_reply)
+    logging.debug('query_reply %s', query_reply)
     if not query_reply['jobComplete']:
         time.sleep(10)
         return _get_query_results(jobs, project_id, job_id, start_index)
@@ -185,7 +185,7 @@ class BigQuery(BaseQueryRunner):
         query_reply = _get_query_results(jobs, project_id=project_id,
                                          job_id=insert_response['jobReference']['jobId'], start_index=current_row)
 
-        logger.debug("bigquery replied: %s", query_reply)
+        logging.debug("bigquery replied: %s", query_reply)
 
         rows = []
 
@@ -200,6 +200,7 @@ class BigQuery(BaseQueryRunner):
         columns = [{'name': f["name"],
                     'friendly_name': f["name"],
                     'type': types_map.get(f['type'], "string")} for f in query_reply["schema"]["fields"]]
+
         data_consumed_mb = int(query_reply['totalBytesProcessed'])/1024.0/1024.0
         data = {
             "columns": columns,
@@ -228,7 +229,7 @@ class BigQuery(BaseQueryRunner):
         return schema
 
     def run_query(self, query, user):
-        logger.debug("BigQuery got query: %s", query)
+        logging.debug("BigQuery got query: %s", query)
 
         bigquery_service = self._get_bigquery_service()
         jobs = bigquery_service.jobs()
