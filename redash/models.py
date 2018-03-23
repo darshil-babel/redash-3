@@ -381,6 +381,10 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
                      default=lambda: generate_token(40),
                      unique=True)
     last_logged_at = Column(db.DateTime(True), nullable=True)
+    usage_limit_mb = Column(postgresql.BIGINT, default=2.0*1024.0*1024.0,
+                            nullable=False)
+    total_data_consumed_mb = Column(postgresql.DOUBLE_PRECISION, default=0.0,
+                              nullable=False)
 
     __tablename__ = 'users'
     __table_args__ = (db.Index('users_org_id_email', 'org_id', 'email', unique=True),)
@@ -397,7 +401,9 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
             'groups': self.group_ids,
             'updated_at': self.updated_at,
             'created_at': self.created_at,
-            'last_logged_at': self.last_logged_at
+            'last_logged_at': self.last_logged_at,
+            'usage_limit_mb': self.usage_limit_mb,
+            'total_data_consumed_mb': self.total_data_consumed_mb
         }
 
         if self.password_hash is None:
@@ -423,6 +429,16 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
         # TODO: this should be cached.
         return list(itertools.chain(*[g.permissions for g in
                                       Group.query.filter(Group.id.in_(self.group_ids))]))
+
+    @property
+    def get_remaining_data(self):
+        # get the remaining amount of data processing
+        return self.usage_limit_mb - self.total_data_consumed_mb
+
+    @classmethod
+    def update_total_data_consumed(cls, data_consumed_mb):
+        cls.total_data_consumed_mb = cls.total_data_consumed_mb+data_consumed_mb
+        return cls
 
     @classmethod
     def get_by_email_and_org(cls, email, org):
