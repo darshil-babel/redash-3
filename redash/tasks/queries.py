@@ -450,7 +450,6 @@ class QueryExecutor(object):
         except Exception as e:
             error = unicode(e)
             data = None
-            data_consumed_mb = 0
             logging.warning('Unexpected error while running query:', exc_info=1)
 
         run_time = time.time() - self.tracker.started_at

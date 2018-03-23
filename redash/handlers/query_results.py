@@ -52,7 +52,6 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
             logging.info('got bak error')
             logging.info(error)
             return None
-            data_consumed_mb = 0
         else:
             dict_data = json.loads(data)
             data_consumed_mb = dict_data['data_consumed_mb']

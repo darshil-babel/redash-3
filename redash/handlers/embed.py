@@ -49,7 +49,6 @@ def run_query_sync(data_source, parameter_values, query_text, max_age=0):
         data, error = data_source.query_runner.run_query(query_text, current_user)
 
         if error:
-            data_consumed_mb = 0
             return None
         else:
             dict_data = json.loads(data)
