@@ -204,7 +204,7 @@ class BigQuery(BaseQueryRunner):
         data = {
             "columns": columns,
             "rows": rows,
-            'metadata': {'data_scanned': int(query_reply['totalBytesProcessed'])}
+            "data_consumed_mb": self._get_total_bytes_processed(jobs, query) / 1000.0 / 1000.0
         }
 
         return data

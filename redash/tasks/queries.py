@@ -446,9 +446,7 @@ class QueryExecutor(object):
         try:
             data, error = query_runner.run_query(annotated_query, self.user)
             dict_data = json.loads(data)
-            metadata = dict_data['metadata']
-            dict_metadata = json.loads(metadata)
-            data_consumed_mb = dict_metadata['data_scanned']/1024.0/1024.0
+            data_consumed_mb = dict_data['data_consumed_mb']
 
         except Exception as e:
             error = unicode(e)
