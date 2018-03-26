@@ -64,7 +64,7 @@ function DashboardCtrl(
       row.forEach((widget) => {
         if (widget.visualization) {
           const maxAge = force ? 0 : undefined;
-          const queryResult = widget.getQuery().getQueryResult(maxAge);
+          const queryResult = widget.getQuery().getQueryResult(maxAge, true);
           if (!_.isUndefined(queryResult)) {
             promises.push(queryResult.toPromise());
           }

@@ -162,8 +162,8 @@ JOB_EXPIRY_TIME = int(os.environ.get("REDASH_JOB_EXPIRY_TIME", 3600 * 12))
 COOKIE_SECRET = os.environ.get("REDASH_COOKIE_SECRET", "c292a0a3aa32397cdb050e233733900f")
 SESSION_COOKIE_SECURE = parse_boolean(os.environ.get("REDASH_SESSION_COOKIE_SECURE") or str(ENFORCE_HTTPS))
 
-LOG_LEVEL = os.environ.get("REDASH_LOG_LEVEL", "INFO")
-LOG_STDOUT = parse_boolean(os.environ.get('REDASH_LOG_STDOUT', 'false'))
+LOG_LEVEL = os.environ.get("REDASH_LOG_LEVEL", "DEBUG")
+LOG_STDOUT = parse_boolean(os.environ.get('REDASH_LOG_STDOUT', 'true'))
 LOG_FORMAT = os.environ.get('REDASH_LOG_FORMAT', '[%(asctime)s][PID:%(process)d][%(levelname)s][%(name)s] %(message)s')
 CELERYD_LOG_FORMAT = os.environ.get('REDASH_CELERYD_LOG_FORMAT', '[%(asctime)s][PID:%(process)d][%(levelname)s][%(processName)s] %(message)s')
 CELERYD_TASK_LOG_FORMAT = os.environ.get('REDASH_CELERYD_TASK_LOG_FORMAT', '[%(asctime)s][PID:%(process)d][%(levelname)s][%(processName)s] task_name=%(task_name)s taks_id=%(task_id)s %(message)s')
@@ -185,7 +185,8 @@ ALERTS_DEFAULT_MAIL_SUBJECT_TEMPLATE = os.environ.get('REDASH_ALERTS_DEFAULT_MAI
 
 # How many requests are allowed per IP to the login page before
 # being throttled?
-# See https://flask-limiter.readthedocs.io/en/stable/#rate-limit-string-notation
+# See https://
+#3-limiter.readthedocs.io/en/stable/#rate-limit-string-notation
 THROTTLE_LOGIN_PATTERN = os.environ.get('REDASH_THROTTLE_LOGIN_PATTERN', '50/hour')
 LIMITER_STORAGE = os.environ.get("REDASH_LIMITER_STORAGE", REDIS_URL)
 

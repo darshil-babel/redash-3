@@ -13,7 +13,6 @@ from redash.handlers.base import BaseResource, get_object_or_404
 from redash.utils import collect_query_parameters, collect_parameters_from_request, gen_query_hash
 from redash.tasks.queries import enqueue_query
 
-
 def error_response(message):
     return {'job': {'status': 4, 'error': message}}, 400
 
@@ -95,7 +94,6 @@ def run_query(data_source, parameter_values, query_text, query_id, max_age=0):
         job = enqueue_query(query_text, data_source, current_user.id, metadata={"Username": current_user.email, "Query ID": query_id})
         return {'job': job.to_dict()}
 
-
 class QueryResultListResource(BaseResource):
     @require_permission('execute_query')
     def post(self):
@@ -128,9 +126,7 @@ class QueryResultListResource(BaseResource):
         })
         return run_query(data_source, parameter_values, query, query_id, max_age)
 
-
 ONE_YEAR = 60 * 60 * 24 * 365.25
-
 
 class QueryResultResource(BaseResource):
     @staticmethod
@@ -194,7 +190,7 @@ class QueryResultResource(BaseResource):
                     query_result = run_query_sync(query.data_source, parameter_values, query.to_dict()['query'], max_age=max_age)
                 elif query.latest_query_data_id is not None:
                     query_result = get_object_or_404(models.QueryResult.get_by_id_and_org, query.latest_query_data_id, self.current_org)
-                
+
             if query is not None and query_result is not None and self.current_user.is_api_user():
                 if query.query_hash != query_result.query_hash:
                     abort(404, message='No cached result found for this query.')
@@ -271,3 +267,26 @@ class JobResource(BaseResource):
         """
         job = QueryTask(job_id=job_id)
         job.cancel()
+
+class QueryDryResultResource(BaseResource):
+    def post(self):
+        """
+        Get Query dry run resut.
+
+        :qparam string query: The query text to execute
+        :qparam number data_source_id: ID of data source to query
+        """
+        params = request.get_json(force=True)
+        query = params['query']
+        data_source = models.DataSource.get_by_id_and_org(params.get('data_source_id'), self.current_org)
+        logging.info("Dry run here")
+        self.record_event({
+            'action': 'dry_execute_query',
+            'timestamp': int(time.time()),
+            'object_id': data_source.id,
+            'object_type': 'data_source',
+            'query': query
+        })
+        logging.info("called here")
+        query_runner = data_source.query_runner
+        return query_runner.dry_execute_query(query)

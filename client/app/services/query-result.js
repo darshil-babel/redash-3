@@ -54,7 +54,16 @@ function addPointToSeries(point, seriesCollection, seriesName) {
 
 
 function QueryResultService($resource, $timeout, $q) {
-  const QueryResultResource = $resource('api/query_results/:id', { id: '@id' }, { post: { method: 'POST' } });
+  const QueryResultResource = $resource(
+    'api/query_results/:id',
+    { id: '@id' },
+    { post: { method: 'POST' } },
+  );
+  const QueryDryResultResource = $resource(
+    'api/query_dry_result',
+    { id: '@id' },
+    { post: { method: 'POST' } },
+  );
   const Job = $resource('api/jobs/:id', { id: '@id' });
   const statuses = {
     1: 'waiting',
@@ -71,7 +80,7 @@ function QueryResultService($resource, $timeout, $q) {
       this.status = 'waiting';
       this.filters = undefined;
       this.filterFreeze = undefined;
-
+      this.queryDryResult = {};
       this.updatedAt = moment();
 
       if (props) {
@@ -414,6 +423,15 @@ function QueryResultService($resource, $timeout, $q) {
       return this.deferred.promise;
     }
 
+    static getMetaResult(dataSourceId, query) {
+      // const queryResult = new QueryResult();
+      const params = {
+        data_source_id: dataSourceId,
+        query,
+      };
+      return QueryDryResultResource.post(params);
+      // return queryResult;
+    }
     static getById(id) {
       const queryResult = new QueryResult();
 
@@ -485,7 +503,11 @@ function QueryResultService($resource, $timeout, $q) {
     static get(dataSourceId, query, maxAge, queryId) {
       const queryResult = new QueryResult();
 
-      const params = { data_source_id: dataSourceId, query, max_age: maxAge };
+      const params = {
+        data_source_id: dataSourceId,
+        query,
+        max_age: maxAge,
+      };
       if (queryId !== undefined) {
         params.query_id = queryId;
       }
