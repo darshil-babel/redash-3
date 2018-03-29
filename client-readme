@@ -1,0 +1,49 @@
+There are 4 types of bindings:
+= means that we’re using a two-way data binding. This means that if you update that variable in your component scope, the change will be reflected on the parent scope;
+< is for one-way bindings when we just want to read a value from a parent scope and not update it;
+@ is for string parameters;
+& is for callbacks in case your component needs to output something to its parent scope.
+
+services
+To use an Angular service, you add it as a dependency for the component (controller, service, filter or directive) that depends on the service.
+reusable business logic independent of views
+
+USING dependency injection
+
+Components such as services, directives, filters, and animations are defined by an injectable factory method or constructor function. These components can be injected with "service" and "value" components as dependencies.
+
+Controllers are defined by a constructor function, which can be injected with any of the "service" and "value" components as dependencies, but they can also be provided with special dependencies. See Controllers below for a list of these special dependencies.
+
+The run method accepts a function, which can be injected with "service", "value" and "constant" components as dependencies. Note that you cannot inject "providers" into run blocks.
+
+The config method accepts a function, which can be injected with "provider" and "constant" components as dependencies. Note that you cannot inject "service" or "value" components into configuration.
+
+
+Controllers
+
+the business logic behind views
+Controllers are "classes" or "constructor functions" that are responsible for providing the application behavior that supports the declarative markup in the template.
+The recommended way of declaring Controllers is using the array notation.
+
+Module
+a container for the different parts of an app including controllers, services, filters, directives which configures the Injector
+
+
+
+-------Folder wise lesson ---------
+
+pages
+
+All the pages for route specify pages. See config/index.js how route are registered.
+
+controller parameters are dependencies hich are injected by AngularJS injector service. They can be anything. But they are usually the services that will be used inside the controller.
+https://stackoverflow.com/questions/19238191/understanding-angular-js-controller-parameters
+
+No body pass the params which are required by controllers
+instead they all are dependency which are resolved when it is called based on services defined
+
+Service components in ng
+https://docs.angularjs.org/api/ng/service
+
+Resource is the service which is used for 3rd party api call
+https://docs.angularjs.org/api/ngResource/service/$resource

@@ -8,6 +8,20 @@ function QueryViewCtrl(
 ) {
   const DEFAULT_TAB = 'table';
 
+  function getQueryMetaResult() {
+    $scope.showLog = false;
+    $scope.queryDryResult = '';
+    $scope.queryDryResultError = '';
+    const dryResult = $scope.query.getQueryMetaResult();
+    dryResult.$promise.then((response) => {
+      $scope.queryDryResult = Math.ceil(response.processedMB);
+    });
+    dryResult.$promise.catch(() => {
+      $scope.queryDryResult = '';
+      $scope.queryDryResultError = 'Something went wrong with your query.';
+    });
+  }
+
   function getQueryResult(maxAge) {
     if (maxAge === undefined) {
       maxAge = $location.search().maxAge;
@@ -95,6 +109,13 @@ function QueryViewCtrl(
     updateSchema();
   }
 
+  $scope.dryExecuteQuery = () => {
+    $scope.lockButton(true);
+    getQueryMetaResult();
+    $scope.lockButton(false);
+    Events.record('dryExecute', 'query', $scope.query.id);
+  };
+
   $scope.executeQuery = () => {
     if (!$scope.canExecuteQuery()) {
       return;
@@ -108,10 +129,8 @@ function QueryViewCtrl(
     $scope.lockButton(true);
     $scope.cancelling = false;
     Events.record('execute', 'query', $scope.query.id);
-
     Notifications.getPermissions();
   };
-
 
   $scope.currentUser = currentUser;
   $scope.dataSource = {};

@@ -31,11 +31,14 @@ function OutdatedQueriesCtrl($scope, Events, $http, $timeout) {
 }
 
 export default function init(ngModule) {
+  // adding a component to ngModule
+  // added a controller to outdatedQueriesPage
+  // controller attach the business logic for view in the callee context.
   ngModule.component('outdatedQueriesPage', {
     template,
     controller: OutdatedQueriesCtrl,
   });
-
+  // return the path and template attached to it.
   return {
     '/admin/queries/outdated': {
       template: '<outdated-queries-page></outdated-queries-page>',
