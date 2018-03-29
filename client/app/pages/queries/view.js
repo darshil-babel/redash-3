@@ -11,9 +11,14 @@ function QueryViewCtrl(
   function getQueryMetaResult() {
     $scope.showLog = false;
     $scope.queryDryResult = '';
+    $scope.queryDryResultError = '';
     const dryResult = $scope.query.getQueryMetaResult();
     dryResult.$promise.then((response) => {
       $scope.queryDryResult = Math.ceil(response.processedMB);
+    });
+    dryResult.$promise.catch(() => {
+      $scope.queryDryResult = '';
+      $scope.queryDryResultError = 'Something went wrong with your query.';
     });
   }
 

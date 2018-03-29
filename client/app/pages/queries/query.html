@@ -110,7 +110,6 @@
                       ng-options="ds.id as ds.name for ds in dataSources"></select>
 
               <div class="pull-right">
-                <span ng-if="!!queryDryResult">This query will use {{queryDryResult}}MB</span>
                 <button class="btn btn-s btn-default" ng-click="togglePublished()" ng-if="query.is_draft && query.id != undefined && (isQueryOwner || currentUser.hasPermission('admin'))">
                   <span class="fa fa-paper-plane"></span> Publish
                 </button>
@@ -134,7 +133,9 @@
                 </div>
               </div>
             </div>
-            <p style="height:calc(100% - 40px);">
+            <div style="line-height: 20px; font-weight:500" class="p-5" ng-if="!!queryDryResult">This query will use {{queryDryResult}}MB</div>
+            <div style="line-height: 20px; font-weight:500; color: red;" class="p-5" ng-if="!!queryDryResultError">{{queryDryResultError}} </div>
+            <p ng-style="{'height': !!queryDryResult || !!queryDryResultError ? 'calc(100% - 70px)' : 'calc(100% - 40px)' }">
               <query-editor query="query"
                             schema="schema"
                             syntax="dataSource.syntax"></query-editor>
