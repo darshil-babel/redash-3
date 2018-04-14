@@ -31,6 +31,7 @@ types_map = {
     'TIMESTAMP': TYPE_DATETIME,
 }
 
+logger = logging.getLogger(__name__)
 
 def transform_row(row, fields):
     column_index = 0
@@ -68,7 +69,6 @@ def _load_key(filename):
 
 def _get_query_results(jobs, project_id, job_id, start_index):
     query_reply = jobs.getQueryResults(projectId=project_id, jobId=job_id, startIndex=start_index).execute()
-    logger = logging.getLogger(__name__)
     logging.debug('query_reply %s', query_reply)
     if not query_reply['jobComplete']:
         time.sleep(10)
