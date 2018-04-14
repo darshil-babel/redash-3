@@ -1,6 +1,8 @@
 import { template as templateBuilder } from 'underscore';
 import template from './alert.html';
 
+// here $outerparams, $location, $sce are all resolved using ng registerServices
+// toastr, currentUser, Query, Events, Alert all are defined under service section
 function AlertCtrl($routeParams, $location, $sce, toastr, currentUser, Query, Events, Alert) {
   this.alertId = $routeParams.alertId;
 

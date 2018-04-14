@@ -89,7 +89,13 @@
 
         <div ng-class="editorSize" style="height:100%;">
             <div class="p-5">
+
               <button type="button" class="btn btn-primary btn-s" ng-disabled="queryExecuting || !canExecuteQuery()"
+                      ng-click="dryExecuteQuery()">
+                <span class="zmdi zmdi-play"></span> Dry Run
+              </button>
+
+              <button type="button" class="btn btn-success btn-s" ng-disabled="queryExecuting || !canExecuteQuery()"
                       ng-click="executeQuery()">
                 <span class="zmdi zmdi-play"></span> Execute
               </button>
@@ -127,7 +133,9 @@
                 </div>
               </div>
             </div>
-            <p style="height:calc(100% - 40px);">
+            <div style="line-height: 20px; font-weight:500" class="p-5" ng-if="!!queryDryResult">This query will use {{queryDryResult}}MB</div>
+            <div style="line-height: 20px; font-weight:500; color: red;" class="p-5" ng-if="!!queryDryResultError">{{queryDryResultError}} </div>
+            <p ng-style="{'height': !!queryDryResult || !!queryDryResultError ? 'calc(100% - 70px)' : 'calc(100% - 40px)' }">
               <query-editor query="query"
                             schema="schema"
                             syntax="dataSource.syntax"></query-editor>
@@ -145,7 +153,7 @@
   <div class="tile">
     <div class="t-header bg-ace">
       <div class="pull-right">
-        <button class="btn btn-sm btn-default" ng-click="executeQuery()"
+        <button class="btn btn-sm btn-default" ng-click="executeQuery(true)"
                 ng-disabled="queryExecuting || !canExecuteQuery()" title="Refresh Dataset"
                 ng-if="!sourceMode"><span
           class="zmdi zmdi-refresh"></span></button>

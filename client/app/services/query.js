@@ -259,7 +259,15 @@ function QueryResource($resource, $http, $q, $location, currentUser, QueryResult
     return this.getParameters().isRequired();
   };
 
-  Query.prototype.getQueryResult = function getQueryResult(maxAge) {
+  Query.prototype.getQueryMetaResult = function getQueryMetaResult() {
+    if (!this.query) {
+      return new QueryResultError("Can't execute empty query.");
+    }
+    const queryText = this.query;
+    this.queryDryResult = QueryResult.getMetaResult(this.data_source_id, queryText);
+    return this.queryDryResult;
+  };
+  Query.prototype.getQueryResult = function getQueryResult(maxAge, dryRun) {
     if (!this.query) {
       return new QueryResultError("Can't execute empty query.");
     }
@@ -303,7 +311,7 @@ function QueryResource($resource, $http, $q, $location, currentUser, QueryResult
         this.queryResult = QueryResult.getById(this.latest_query_data_id);
       }
     } else if (this.data_source_id) {
-      this.queryResult = QueryResult.get(this.data_source_id, queryText, maxAge, this.id);
+      this.queryResult = QueryResult.get(this.data_source_id, queryText, maxAge, this.id, dryRun);
     } else {
       return new QueryResultError('Please select data source to run this query.');
     }
