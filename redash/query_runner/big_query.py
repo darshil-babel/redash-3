@@ -68,7 +68,7 @@ def _load_key(filename):
 
 def _get_query_results(jobs, project_id, job_id, start_index):
     query_reply = jobs.getQueryResults(projectId=project_id, jobId=job_id, startIndex=start_index).execute()
-    logging.debug('query_reply %s', query_reply)
+    logging.debug('query_reply %s', query_reply['totalBytesProcessed'])
     if not query_reply['jobComplete']:
         time.sleep(10)
         return _get_query_results(jobs, project_id, job_id, start_index)
@@ -185,8 +185,6 @@ class BigQuery(BaseQueryRunner):
         query_reply = _get_query_results(jobs, project_id=project_id,
                                          job_id=insert_response['jobReference']['jobId'], start_index=current_row)
 
-        logging.debug("bigquery replied: %s", query_reply)
-
         rows = []
 
         while ("rows" in query_reply) and current_row < query_reply['totalRows']:
@@ -201,10 +199,11 @@ class BigQuery(BaseQueryRunner):
                     'friendly_name': f["name"],
                     'type': types_map.get(f['type'], "string")} for f in query_reply["schema"]["fields"]]
 
+        logging.debug('Before saving results {}'.format(int(query_reply['totalBytesProcessed']) / 1024.0 / 1024.0))
         data = {
             "columns": columns,
             "rows": rows,
-            "data_consumed_mb": self._get_total_bytes_processed(jobs, query) / 1024.0 / 1024.0
+            "data_consumed_mb": int(query_reply['totalBytesProcessed']) / 1024.0 / 1024.0
         }
 
         return data
