@@ -1683,6 +1683,33 @@ class QuerySnippet(TimestampMixin, db.Model, BelongsToOrgMixin):
 
         return d
 
+
+class Tags(TimestampMixin, db.Model):
+    id = Column(db.Integer, primary_key=True)
+    text = Column(db.Text, nullable=False)
+    usage_count = Column(db.Integer, default=0, nullable=False)
+    description = Column(db.Text, nullable=True)
+    url = Column(db.Text, nullable=True)
+
+    __tablename__ = 'tags'
+
+    def to_dict(self):
+        d = {
+            'id': self.id,
+            'text': self.text,
+            'usage_count': self.usage_count,
+            'description': self.description,
+            'url': self.url,
+            'updated_at': self.updated_at,
+            'created_at': self.created_at
+        }
+
+        return d
+
+    def __unicode__(self):
+        return u"%s" % self.id
+
+
 _gfk_types = {'queries': Query, 'dashboards': Dashboard}
 
 
