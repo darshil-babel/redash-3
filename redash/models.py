@@ -1716,6 +1716,10 @@ class Tags(TimestampMixin, db.Model):
 
         return d
 
+    @classmethod
+    def get_tags(cls, tag_list):
+        return cls.query.filter(cls.id.in_(tag_list))
+
     def __unicode__(self):
         return u"%s" % self.id
 
