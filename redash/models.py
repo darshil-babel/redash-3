@@ -372,6 +372,7 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
     id = Column(db.Integer, primary_key=True)
     org_id = Column(db.Integer, db.ForeignKey('organizations.id'))
     org = db.relationship(Organization, backref=db.backref("users", lazy="dynamic"))
+    username = Column(db.String(16), nullable=True, unique=True)
     name = Column(db.String(320))
     email = Column(db.String(320))
     password_hash = Column(db.String(128), nullable=True)
@@ -396,6 +397,7 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
         d = {
             'id': self.id,
             'name': self.name,
+            'username': self.username,
             'email': self.email,
             'gravatar_url': self.gravatar_url,
             'groups': self.group_ids,
@@ -1279,6 +1281,7 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
     name = Column(db.String(100))
     user_id = Column(db.Integer, db.ForeignKey("users.id"))
     user = db.relationship(User)
+    description = Column(db.String(4096), nullable=True)
     # TODO: The layout should dynamically be built from position and size information on each widget.
     # Will require update in the frontend code to support this.
     layout = Column(db.Text)
@@ -1286,6 +1289,9 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
     is_archived = Column(db.Boolean, default=False, index=True)
     is_draft = Column(db.Boolean, default=True, index=True)
     widgets = db.relationship('Widget', backref='dashboard', lazy='dynamic')
+    tag_list = Column(db.ARRAY(db.Integer()), nullable=True)
+    url = Column(db.String(100), nullable=True, unique=True)
+    is_public = Column(db.Boolean, default=True, index=True)
 
     __tablename__ = 'dashboards'
     __mapper_args__ = {
@@ -1333,6 +1339,7 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
             'id': self.id,
             'slug': self.slug,
             'name': self.name,
+            'description': self.description,
             'user_id': self.user_id,
             'layout': layout,
             'dashboard_filters_enabled': self.dashboard_filters_enabled,
@@ -1341,7 +1348,10 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
             'is_draft': self.is_draft,
             'updated_at': self.updated_at,
             'created_at': self.created_at,
-            'version': self.version
+            'version': self.version,
+            'tag_list': self.tag_list,
+            'url': self.url,
+            'is_public': self.is_public
         }
 
     @classmethod
@@ -1686,10 +1696,10 @@ class QuerySnippet(TimestampMixin, db.Model, BelongsToOrgMixin):
 
 class Tags(TimestampMixin, db.Model):
     id = Column(db.Integer, primary_key=True)
-    text = Column(db.Text, nullable=False)
+    text = Column(db.Text, nullable=False, unique=True)
     usage_count = Column(db.Integer, default=0, nullable=False)
     description = Column(db.Text, nullable=True)
-    url = Column(db.Text, nullable=True)
+    url = Column(db.Text, nullable=True, unique=True)
 
     __tablename__ = 'tags'
 
