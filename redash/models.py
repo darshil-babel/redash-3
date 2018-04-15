@@ -856,6 +856,9 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
     schedule_failures = Column(db.Integer, default=0)
     visualizations = db.relationship("Visualization", cascade="all, delete-orphan")
     options = Column(MutableDict.as_mutable(PseudoJSON), default={})
+    tag_list = Column(db.ARRAY(db.Integer()), nullable=True)
+    url = Column(db.String(100), nullable=True, unique=True)
+    is_public = Column(db.Boolean, default=True, index=True, nullable=True)
 
     __tablename__ = 'queries'
     __mapper_args__ = {
@@ -879,7 +882,10 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
             'created_at': self.created_at,
             'data_source_id': self.data_source_id,
             'options': self.options,
-            'version': self.version
+            'version': self.version,
+            'tag_list': self.tag_list,
+            'url': self.url,
+            'is_public': self.is_public
         }
 
         if with_user:
@@ -1291,7 +1297,7 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
     widgets = db.relationship('Widget', backref='dashboard', lazy='dynamic')
     tag_list = Column(db.ARRAY(db.Integer()), nullable=True)
     url = Column(db.String(100), nullable=True, unique=True)
-    is_public = Column(db.Boolean, default=True, index=True)
+    is_public = Column(db.Boolean, default=True, index=True, nullable=True)
 
     __tablename__ = 'dashboards'
     __mapper_args__ = {
@@ -1420,6 +1426,8 @@ class Visualization(TimestampMixin, db.Model):
     name = Column(db.String(255))
     description = Column(db.String(4096), nullable=True)
     options = Column(db.Text)
+    url = Column(db.String(100), nullable=True, unique=True)
+    is_public = Column(db.Boolean, default=True, index=True, nullable=True)
 
     __tablename__ = 'visualizations'
 
@@ -1431,7 +1439,9 @@ class Visualization(TimestampMixin, db.Model):
             'description': self.description,
             'options': json.loads(self.options),
             'updated_at': self.updated_at,
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'url': self.url,
+            'is_public': self.is_public
         }
 
         if with_query:
