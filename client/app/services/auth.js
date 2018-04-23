@@ -80,7 +80,7 @@ function CurrentUserService() {
     return this.hasPermission('admin') || (userId && (userId === this.id));
   };
 
-  this.hasPermission = permission => this.permissions.indexOf(permission) !== -1;
+  this.hasPermission = permission => this.permissions && this.permissions.indexOf(permission) !== -1;
 
   this.isAdmin = this.hasPermission('admin');
 }

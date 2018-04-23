@@ -10,13 +10,12 @@ from redash.models import ApiUser
 from redash.tasks import record_event as record_event_task
 from redash.utils import json_dumps
 from sqlalchemy.orm.exc import NoResultFound
+import logging
 
 routes = Blueprint('redash', __name__, template_folder=settings.fix_assets_path('templates'))
 
 
 class BaseResource(Resource):
-    decorators = [login_required]
-
     def __init__(self, *args, **kwargs):
         super(BaseResource, self).__init__(*args, **kwargs)
         self._user = None
@@ -28,6 +27,7 @@ class BaseResource(Resource):
 
     @property
     def current_user(self):
+        logging.debug("in current user")
         return current_user._get_current_object()
 
     @property
@@ -44,6 +44,7 @@ class BaseResource(Resource):
 
 
 def record_event(org, user, options):
+
     if user.is_api_user():
         options.update({
             'api_key': user.name,
@@ -52,7 +53,7 @@ def record_event(org, user, options):
     else:
         options.update({
             'user_id': user.id,
-            'user_name': user.name,
+            'user_name': "user.name",
             'org_id': org.id
         })
 

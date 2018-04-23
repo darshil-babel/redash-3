@@ -236,9 +236,18 @@ class PermissionsCheckMixin(object):
 class AnonymousUser(AnonymousUserMixin, PermissionsCheckMixin):
     @property
     def permissions(self):
-        return []
+        return ["view_query","view_dashboard", "view_only", "list_data_sources", "list_dashboards"]
 
+    @property
+    def id(self):
+        return -1
+    @property
+    def group_ids(self):
+        return [2]
     def is_api_user(self):
+        return False
+
+    def has_access(self, obj, access_type):
         return False
 
 
@@ -266,7 +275,7 @@ class ApiUser(UserMixin, PermissionsCheckMixin):
         return ['view_query']
 
     def has_access(self, obj, access_type):
-        return False
+        return AccessPermission.exists(obj, access_type, grantee=self)
 
 
 class Organization(TimestampMixin, db.Model):
@@ -933,8 +942,8 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
     def all_queries(cls, group_ids, user_id=None, drafts=False):
         query_ids = (db.session.query(distinct(cls.id))
                                .join(DataSourceGroup, Query.data_source_id == DataSourceGroup.data_source_id)
-                               .filter(Query.is_archived == False)
-                               .filter(DataSourceGroup.group_id.in_(group_ids)))
+                               .filter(Query.is_archived == False))
+                               #.filter(DataSourceGroup.group_id.in_(group_ids)))
 
         q = (cls.query
                 .options(joinedload(Query.user),
@@ -1690,8 +1699,9 @@ def init_db():
     default_org = Organization(name="Default", slug='default', settings={})
     admin_group = Group(name='admin', permissions=['admin', 'super_admin'], org=default_org, type=Group.BUILTIN_GROUP)
     default_group = Group(name='default', permissions=Group.DEFAULT_PERMISSIONS, org=default_org, type=Group.BUILTIN_GROUP)
+    anonymous_group = Group(name='anoymous', permissions=["view_query", "view_source", "list_dashboards"], org=default_org, type=Group.BUILTIN_GROUP)
 
-    db.session.add_all([default_org, admin_group, default_group])
+    db.session.add_all([default_org, admin_group, default_group, anonymous_group])
     # XXX remove after fixing User.group_ids
     db.session.commit()
-    return default_org, admin_group, default_group
+    return default_org, admin_group, default_group, anonymous_group

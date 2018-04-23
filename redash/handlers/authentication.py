@@ -183,7 +183,7 @@ def config(org_slug=None):
 
 
 @routes.route(org_scoped_rule('/api/session'), methods=['GET'])
-@login_required
+#@login_required
 def session(org_slug=None):
     if current_user.is_api_user():
         user = {

@@ -149,7 +149,6 @@ def redirect_to_login():
 def setup_authentication(app):
     login_manager.init_app(app)
     login_manager.anonymous_user = models.AnonymousUser
-
     app.secret_key = settings.COOKIE_SECRET
     app.register_blueprint(google_oauth.blueprint)
     app.register_blueprint(saml_auth.blueprint)

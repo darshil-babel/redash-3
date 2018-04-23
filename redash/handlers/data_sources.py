@@ -1,6 +1,7 @@
 import logging
 
 from flask import make_response, request
+from flask_login import login_required
 from flask_restful import abort
 from funcy import project
 from sqlalchemy.exc import IntegrityError
@@ -85,6 +86,7 @@ class DataSourceListResource(BaseResource):
 
         return sorted(response.values(), key=lambda d: d['id'])
 
+    @login_required
     @require_admin
     def post(self):
         req = request.get_json(True)
@@ -126,6 +128,7 @@ class DataSourceListResource(BaseResource):
 
 
 class DataSourceSchemaResource(BaseResource):
+    @require_permission('list_data_sources')
     def get(self, data_source_id):
         data_source = get_object_or_404(models.DataSource.get_by_id_and_org, data_source_id, self.current_org)
         require_access(data_source.groups, self.current_user, view_only)
@@ -136,6 +139,8 @@ class DataSourceSchemaResource(BaseResource):
 
 
 class DataSourcePauseResource(BaseResource):
+    decorators = [login_required]
+
     @require_admin
     def post(self, data_source_id):
         data_source = get_object_or_404(models.DataSource.get_by_id_and_org, data_source_id, self.current_org)
@@ -168,6 +173,8 @@ class DataSourcePauseResource(BaseResource):
 
 
 class DataSourceTestResource(BaseResource):
+    decorators = [login_required]
+
     @require_admin
     def post(self, data_source_id):
         data_source = get_object_or_404(models.DataSource.get_by_id_and_org, data_source_id, self.current_org)

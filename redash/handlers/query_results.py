@@ -4,7 +4,7 @@ import time
 
 import pystache
 from flask import make_response, request
-from flask_login import current_user
+from flask_login import current_user, login_required
 from flask_restful import abort
 from redash import models, settings, utils
 from redash.tasks import QueryTask, record_event
@@ -107,6 +107,8 @@ def run_query(data_source, parameter_values, query_text, query_id, max_age=0):
         return {'job': job.to_dict()}
 
 class QueryResultListResource(BaseResource):
+    decorators = [login_required]
+
     @require_permission('execute_query')
     def post(self):
         """
@@ -254,12 +256,15 @@ class QueryResultResource(BaseResource):
         headers = {'Content-Type': "application/json"}
         return make_response(data, 200, headers)
 
+
     @staticmethod
+    @login_required
     def make_csv_response(query_result):
         headers = {'Content-Type': "text/csv; charset=UTF-8"}
         return make_response(query_result.make_csv_content(), 200, headers)
 
     @staticmethod
+    @login_required
     def make_excel_response(query_result):
         headers = {'Content-Type': "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
         return make_response(query_result.make_excel_content(), 200, headers)
@@ -281,6 +286,8 @@ class JobResource(BaseResource):
         job.cancel()
 
 class QueryDryResultResource(BaseResource):
+    @login_required
+    @require_permission('execute_query')
     def post(self):
         """
         Get Query dry run resut.

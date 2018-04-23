@@ -2,7 +2,7 @@ from itertools import chain
 
 from flask import request, url_for
 from funcy import distinct, project, take
-
+from flask_login import login_required
 from flask_restful import abort
 from redash import models, serializers, settings
 from redash.handlers.base import BaseResource, get_object_or_404
@@ -110,6 +110,7 @@ class DashboardResource(BaseResource):
 
         return response
 
+    @login_required
     @require_permission('edit_dashboard')
     def post(self, dashboard_slug):
         """
@@ -149,6 +150,7 @@ class DashboardResource(BaseResource):
         result = dashboard.to_dict(with_widgets=True, user=self.current_user)
         return result
 
+    @login_required
     @require_permission('edit_dashboard')
     def delete(self, dashboard_slug):
         """

@@ -4,6 +4,7 @@ import sqlparse
 from flask import jsonify, request
 from flask_login import login_required
 from flask_restful import abort
+from flask.views import MethodView
 from funcy import distinct, take
 from sqlalchemy.orm.exc import StaleDataError
 
@@ -16,7 +17,8 @@ from redash.permissions import (can_modify, not_view_only, require_access,
                                 require_object_modify_permission,
                                 require_permission, view_only)
 from redash.utils import collect_parameters_from_request
-
+import logging
+logger = logging.getLogger('test')
 
 @routes.route(org_scoped_rule('/api/queries/format'), methods=['POST'])
 @login_required
@@ -73,8 +75,8 @@ class QueryRecentResource(BaseResource):
 
         return queries
 
-
 class QueryListResource(BaseResource):
+    @login_required
     @require_permission('create_query')
     def post(self):
         """
@@ -143,14 +145,15 @@ class QueryListResource(BaseResource):
 
         Responds with an array of :ref:`query <query-response-label>` objects.
         """
-
-        results = models.Query.all_queries(self.current_user.group_ids, self.current_user.id)
+        results = models.Query.all_queries(self.current_user.group_ids)
+        logger.info(self.current_user.group_ids)
         page = request.args.get('page', 1, type=int)
         page_size = request.args.get('page_size', 25, type=int)
         return paginate(results, page, page_size, lambda q: q.to_dict(with_stats=True, with_last_modified_by=False))
 
 
 class MyQueriesResource(BaseResource):
+    @login_required
     @require_permission('view_query')
     def get(self):
         """
@@ -169,6 +172,7 @@ class MyQueriesResource(BaseResource):
 
 
 class QueryResource(BaseResource):
+    @login_required
     @require_permission('edit_query')
     def post(self, query_id):
         """
@@ -224,10 +228,11 @@ class QueryResource(BaseResource):
         require_access(q.groups, self.current_user, view_only)
 
         result = q.to_dict(with_visualizations=True)
-        result['can_edit'] = can_modify(q, self.current_user)
+        result['can_edit'] = "false" #can_modify(q, self.current_user)
         return result
 
     # TODO: move to resource of its own? (POST /queries/{id}/archive)
+    @login_required
     def delete(self, query_id):
         """
         Archives a query.
@@ -241,6 +246,7 @@ class QueryResource(BaseResource):
 
 
 class QueryForkResource(BaseResource):
+    @login_required
     @require_permission('edit_query')
     def post(self, query_id):
         """
@@ -258,6 +264,7 @@ class QueryForkResource(BaseResource):
 
 
 class QueryRefreshResource(BaseResource):
+    @login_required
     def post(self, query_id):
         """
         Execute a query, updating the query object with the results.
