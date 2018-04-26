@@ -116,11 +116,11 @@
                 <button class="btn btn-s btn-default" ng-click="duplicateQuery()" ng-disabled="query.id === undefined || !canForkQuery()">
                   <span class="zmdi zmdi-arrow-split"></span> Fork
                 </button>
-                <button class="btn btn-default" ng-show="canEdit" ng-click="saveQuery()">
+                <button class="btn btn-default" ng-show="canEdit" ng-disabled="isAuthenticated" ng-click="saveQuery()">
                   <span class="fa fa-floppy-o"> </span> Save<span
                   ng-show="isDirty">&#42;</span>
                 </button>
-                <div ng-if="query.id != undefined" class="btn-group" role="group" uib-dropdown>
+                <div ng-if="!isAuthenticated" ng-if="query.id != undefined" class="btn-group" role="group" uib-dropdown>
                   <button class="btn btn-default btn-sm dropdown-toggle" uib-dropdown-toggle>
                     <span class="zmdi zmdi-more"></span>
                   </button>
@@ -157,7 +157,7 @@
                 ng-disabled="queryExecuting || !canExecuteQuery()" title="Refresh Dataset"
                 ng-if="!sourceMode"><span
           class="zmdi zmdi-refresh"></span></button>
-        <div class="btn-group" uib-dropdown>
+        <div ng-if="!isAuthenticated" class="btn-group" uib-dropdown>
           <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                   ng-disabled="queryExecuting || !queryResult.getData()" aria-haspopup="true"
                   uib-dropdown-toggle aria-expanded="false">

@@ -31,9 +31,9 @@ const EditTextBoxComponent = {
   },
 };
 
-function DashboardWidgetCtrl($location, $uibModal, $window, Events, currentUser) {
-  this.canViewQuery = currentUser.hasPermission('view_query');
-
+function DashboardWidgetCtrl($location, $uibModal, $window, Events, Auth) {
+  this.canViewQuery = true;
+  this.isAuthenticated = Auth.isAuthenticated();
   this.editTextBox = () => {
     this.widget.existing_text = this.widget.text;
     this.widget.new_text = this.widget.text;

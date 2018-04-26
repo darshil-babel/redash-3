@@ -4,7 +4,7 @@ import template from './query.html';
 function QueryViewCtrl(
   $scope, Events, $route, $routeParams, $location, $window, $q,
   KeyboardShortcuts, Title, AlertDialog, Notifications, clientConfig, toastr, $uibModal,
-  currentUser, Query, DataSource,
+  currentUser, Query, DataSource, Auth,
 ) {
   const DEFAULT_TAB = 'table';
 
@@ -132,6 +132,7 @@ function QueryViewCtrl(
     Notifications.getPermissions();
   };
 
+  $scope.isAuthenticated = Auth.isAuthenticated;
   $scope.currentUser = currentUser;
   $scope.dataSource = {};
   $scope.query = $route.current.locals.query;
@@ -155,11 +156,9 @@ function QueryViewCtrl(
 
   $scope.isQueryOwner = (currentUser.id === $scope.query.user.id) || currentUser.hasPermission('admin');
   $scope.canEdit = currentUser.canEdit($scope.query) || $scope.query.can_edit;
-  $scope.canViewSource = currentUser.hasPermission('view_source');
+  $scope.canViewSource = true;
 
-  $scope.canExecuteQuery = () => {
-    return currentUser.hasPermission('execute_query') && !$scope.dataSource.view_only;
-  }
+  $scope.canExecuteQuery = () => currentUser.hasPermission('execute_query') && !$scope.dataSource.view_only;
 
   $scope.canScheduleQuery = currentUser.hasPermission('schedule_query');
 

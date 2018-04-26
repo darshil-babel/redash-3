@@ -53,6 +53,7 @@ class DashboardListResource(BaseResource):
         """
         dashboard_properties = request.get_json(force=True)
         dashboard = models.Dashboard(name=dashboard_properties['name'],
+                                     description=dashboard_properties["description"],
                                      org=self.current_org,
                                      user=self.current_user,
                                      is_draft=True,

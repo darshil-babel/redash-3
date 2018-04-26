@@ -5,3 +5,7 @@
 .menu-search input[type="text"] {
     height: 30px;
 }
+.login-button {
+  font-weight: 500;
+  color:white;
+}

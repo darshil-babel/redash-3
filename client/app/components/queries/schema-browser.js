@@ -1,6 +1,6 @@
 import template from './schema-browser.html';
 
-function SchemaBrowserCtrl($scope) {
+function SchemaBrowserCtrl($scope, Auth) {
   'ngInject';
 
   this.showTable = (table) => {
@@ -17,6 +17,7 @@ function SchemaBrowserCtrl($scope) {
 
     return size;
   };
+  $scope.isAuthenticated = Auth.isAuthenticated;
 }
 
 const SchemaBrowser = {

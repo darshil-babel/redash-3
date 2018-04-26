@@ -236,7 +236,7 @@ class PermissionsCheckMixin(object):
 class AnonymousUser(AnonymousUserMixin, PermissionsCheckMixin):
     @property
     def permissions(self):
-        return ["view_query","view_dashboard", "view_only", "list_data_sources", "list_dashboards"]
+        return ["view_query","view_dashboard", "view_only", "list_data_sources", "list_dashboards", "view_source"]
 
     @property
     def id(self):
@@ -1286,6 +1286,7 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
     org = db.relationship(Organization, backref="dashboards")
     slug = Column(db.String(140), index=True, default=generate_slug)
     name = Column(db.String(100))
+    description = Column(db.String(280))
     user_id = Column(db.Integer, db.ForeignKey("users.id"))
     user = db.relationship(User)
     # TODO: The layout should dynamically be built from position and size information on each widget.
@@ -1342,6 +1343,7 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
             'id': self.id,
             'slug': self.slug,
             'name': self.name,
+            'description': self.description,
             'user_id': self.user_id,
             'layout': layout,
             'dashboard_filters_enabled': self.dashboard_filters_enabled,

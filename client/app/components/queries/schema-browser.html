@@ -1,7 +1,7 @@
 <div class="schema-container">
   <div class="schema-control">
     <input type="text" placeholder="Search schema..." class="form-control" ng-model="$ctrl.schemaFilter">
-    <button class="btn btn-default"
+    <button ng-if="!isAuthenticated" class="btn btn-default"
             title="Refresh Schema"
             ng-click="$ctrl.onRefresh()">
       <span class="zmdi zmdi-refresh"></span>

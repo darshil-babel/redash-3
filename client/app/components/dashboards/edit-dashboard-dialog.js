@@ -45,7 +45,7 @@ const EditDashboardDialog = {
       });
     }
 
-    this.isFormValid = () => !isEmpty(this.dashboard.name);
+    this.isFormValid = () => !isEmpty(this.dashboard.name) && !isEmpty(this.dashboard.description);
 
     this.saveDashboard = () => {
       this.saveInProgress = true;
@@ -66,6 +66,7 @@ const EditDashboardDialog = {
         const request = {
           slug: this.dashboard.id,
           name: this.dashboard.name,
+          description: this.dashboard.description,
           version: this.dashboard.version,
           dashboard_filters_enabled: this.dashboard.dashboard_filters_enabled,
           layout: JSON.stringify(layout),
@@ -89,6 +90,7 @@ const EditDashboardDialog = {
       } else {
         $http.post('api/dashboards', {
           name: this.dashboard.name,
+          description: this.dashboard.description,
         }).success((response) => {
           this.close();
           $location.path(`/dashboard/${response.slug}`).replace();

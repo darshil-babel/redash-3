@@ -51,7 +51,10 @@
         <li ng-show="$ctrl.showSettingsMenu">
           <a href="users" title="Settings"><i class="fa fa-cog"></i></a>
         </li>
-        <li class="dropdown" uib-dropdown>
+        <li ng-if="!$ctrl.isAuthenticated" class="login-button">
+          <a ng-click="$ctrl.login()" title="Login">LOGIN</a>
+        </li>
+        <li ng-if="$ctrl.isAuthenticated" class="dropdown" uib-dropdown>
           <a href="#" class="dropdown-toggle" uib-dropdown-toggle><span ng-bind="$ctrl.currentUser.name"></span> <span
             class="caret"></span></a>
           <ul class="dropdown-menu" dropdown-menu>

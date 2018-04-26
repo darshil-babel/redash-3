@@ -10,11 +10,11 @@ function controller($rootScope, $location, $uibModal, Auth, currentUser, clientC
   this.logoUrl = logoUrl;
   this.basePath = clientConfig.basePath;
   this.currentUser = currentUser;
-  this.showQueriesMenu = currentUser.hasPermission('view_query');
+  this.showQueriesMenu = true;
   this.showAlertsLink = currentUser.hasPermission('list_alerts');
   this.showNewQueryMenu = currentUser.hasPermission('create_query');
   this.showSettingsMenu = currentUser.hasPermission('list_users');
-  this.showDashboardsMenu = currentUser.hasPermission('list_dashboards');
+  this.showDashboardsMenu = true;
 
   this.reloadDashboards = () => {
     logger('Reloading dashboards.');
@@ -40,6 +40,9 @@ function controller($rootScope, $location, $uibModal, Auth, currentUser, clientC
 
   this.logout = () => {
     Auth.logout();
+  };
+  this.login = () => {
+    Auth.login();
   };
 }
 
