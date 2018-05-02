@@ -24,9 +24,20 @@ def drop_tables():
 @manager.command()
 def update_all_usage_limits():
     """Updates all the usage limits in table users."""
-    from redash.models import db
-    users = db.User.query.all()
+    from redash import models
+    users = models.User.query.all()
 
     for user in users:
-        user.update_data_usage_limit(2.0*1024.0*1024.0)
-    db.session.commit()
+        user.update_data_usage_limit(1.0*1024.0*1024.0)
+    models.db.session.commit()
+
+
+@manager.command()
+def create_non_existing_usernames():
+    """Creates usernames for users which do not have them."""
+    from redash import models
+    users = models.User.query.filter(models.User.username == None)
+
+    for user in users:
+        user.username = user.email.split("@")[0]
+    models.db.session.commit()
