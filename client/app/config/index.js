@@ -78,7 +78,6 @@ function registerPages() {
   const context = require.context('@/pages', true, /^((?![\\/]test[\\/]).)*\.js$/);
   const routesCollection = registerAll(context);
   const publicPath = [
-    '/',
     '/queries',
     '/queries/:queryId',
     '/queries/:queryId/source',
@@ -95,7 +94,7 @@ function registerPages() {
         // We should look into switching to ui-router, that has built in support for
         // such things.
         route.template = `<app-header></app-header><route-status></route-status>${route.template}<footer></footer>`;
-        if (publicPath.indexOf(path) >= -1) {
+        if (publicPath.indexOf(path) >= 0) {
           route.authenticated = false;
         } else {
           route.authenticated = true;

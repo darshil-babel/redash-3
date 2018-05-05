@@ -233,7 +233,6 @@ const ShareDashboardComponent = {
     'ngInject';
 
     this.dashboard = this.resolve.dashboard;
-
     this.toggleSharing = () => {
       const url = `api/dashboards/${this.dashboard.id}/share`;
 

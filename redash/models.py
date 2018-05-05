@@ -33,6 +33,7 @@ from sqlalchemy.orm.exc import NoResultFound  # noqa: F401
 from sqlalchemy.types import TypeDecorator
 from functools import reduce
 
+logger = logging.getLogger('model')
 
 class SQLAlchemyExt(SQLAlchemy):
     def apply_pool_defaults(self, app, options):
@@ -243,7 +244,7 @@ class AnonymousUser(AnonymousUserMixin, PermissionsCheckMixin):
         return -1
     @property
     def group_ids(self):
-        return [2]
+        return [1, 2]
     def is_api_user(self):
         return False
 
@@ -425,6 +426,15 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
         if with_api_key:
             d['api_key'] = self.api_key
 
+        return d
+
+    def user_key_info_to_dict(self, with_api_key=False):
+        d = {
+            'id': self.id,
+            'name': self.name,
+            'username': self.username,
+            'gravatar_url': self.gravatar_url,
+        }
         return d
 
     def is_api_user(self):
@@ -921,6 +931,21 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
 
         return d
 
+    def to_feed_dict(self):
+        return {
+            'id': self.id,
+            'title': self.name,
+            'description': self.description,
+            'user_id': self.user_id,
+            'updated_at': self.updated_at,
+            'created_at': self.created_at,
+            'version': self.version,
+            'tag_list': self.tag_list,
+            'url': self.url,
+            'is_public': self.is_public,
+            'user': self.user.user_key_info_to_dict()
+        }
+
     def archive(self, user=None):
         db.session.add(self)
         self.is_archived = True
@@ -1367,7 +1392,23 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
             'version': self.version,
             'tag_list': self.tag_list,
             'url': self.url,
-            'is_public': self.is_public
+            'is_public': self.is_public,
+            'user': self.user.user_key_info_to_dict()
+        }
+
+    def to_feed_dict(self):
+        return {
+            'id': self.id,
+            'title': self.name,
+            'description': self.description,
+            'user_id': self.user_id,
+            'updated_at': self.updated_at,
+            'created_at': self.created_at,
+            'version': self.version,
+            'tag_list': self.tag_list,
+            'url': self.url,
+            'is_public': self.is_public,
+            'user': self.user.user_key_info_to_dict()
         }
 
     @classmethod
@@ -1378,15 +1419,14 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
             .outerjoin(Visualization)
             .outerjoin(Query)
             .outerjoin(DataSourceGroup, Query.data_source_id == DataSourceGroup.data_source_id)
-            .filter(
-                Dashboard.is_archived == False,
-                (DataSourceGroup.group_id.in_(group_ids) |
-                 (Dashboard.user_id == user_id) |
-                 ((Widget.dashboard != None) & (Widget.visualization == None))),
-                Dashboard.org == org)
             .group_by(Dashboard.id))
+            # .filter(
+            #     Dashboard.is_archived == False,
+            #     (DataSourceGroup.group_id.in_(group_ids) |
+            #      ((Widget.dashboard != None) & (Widget.visualization == None))),
+            #     Dashboard.org == org)
 
-        query = query.filter(or_(Dashboard.user_id == user_id, Dashboard.is_draft == False))
+        #query = query.filter(or_(Dashboard.user_id == user_id, Dashboard.is_draft == False))
 
         return query
 

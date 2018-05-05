@@ -19,7 +19,7 @@ from redash.handlers.groups import GroupListResource, GroupResource, GroupMember
     GroupDataSourceListResource, GroupDataSourceResource
 from redash.handlers.destinations import DestinationTypeListResource, DestinationResource, DestinationListResource
 from redash.handlers.query_snippets import QuerySnippetListResource, QuerySnippetResource
-
+from redash.handlers.feed import FeedListResource
 
 class ApiExt(Api):
     def add_org_resource(self, resource, *urls, **kwargs):
@@ -43,6 +43,8 @@ api.add_org_resource(AlertResource, '/api/alerts/<alert_id>', endpoint='alert')
 api.add_org_resource(AlertSubscriptionListResource, '/api/alerts/<alert_id>/subscriptions', endpoint='alert_subscriptions')
 api.add_org_resource(AlertSubscriptionResource, '/api/alerts/<alert_id>/subscriptions/<subscriber_id>', endpoint='alert_subscription')
 api.add_org_resource(AlertListResource, '/api/alerts', endpoint='alerts')
+
+api.add_org_resource(FeedListResource, '/api/feed', endpoint="feed")
 
 api.add_org_resource(DashboardListResource, '/api/dashboards', endpoint='dashboards')
 api.add_org_resource(RecentDashboardsResource, '/api/dashboards/recent', endpoint='recent_dashboards')

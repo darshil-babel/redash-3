@@ -5,6 +5,23 @@
         <span class="label label-default" ng-if="$ctrl.dashboard.is_draft && !$ctrl.dashboard.is_archived">Unpublished</span>
         <span class="label label-warning" ng-if="$ctrl.dashboard.is_archived" uib-popover="This dashboard is archived and and won't appear in the dashboards list or search results." popover-placement="right" popover-trigger="'mouseenter'">Archived</span>
       </h3>
+      <h5 class="m-t-20">
+        {{$ctrl.dashboard.description}}
+      </h5>
+      <ul class="list-inline m-t-20">
+        <li>
+          <span class="zmdi zmdi-account"></span>
+          <span class="text-muted">Created By </span>
+          <strong>{{$ctrl.dashboard.user.name}}</strong>
+        </li>
+        <li>
+          <span class="zmdi zmdi-time"></span>
+          <span class="text-muted">Created at </span>
+          <strong>
+            <rd-time-ago value="$ctrl.dashboard.created_at"></rd-time-ago>
+          </strong>
+        </li>
+      </ul>
     </div>
     <div class="col-sm-3 text-right">
       <h3>

@@ -1,7 +1,7 @@
 <div class='container row'>
   <page-header title="Dashboards"></page-header>
   <div class="col-lg-3">
-    <input type='text' class='form-control' placeholder="Search Dashboards..." 
+    <input type='text' class='form-control' placeholder="Search Dashboards..."
       ng-change="$ctrl.update()" ng-model="$ctrl.searchText" autofocus/>
     <div class='list-group m-t-20 tags-list'>
       <a ng-repeat='tag in $ctrl.allTags' ng-class='{"active": $ctrl.tagIsSelected(tag)}'
@@ -16,6 +16,7 @@
         <thead>
         <tr>
           <th>Name</th>
+          <th>Created By</th>
           <th>Created At</th>
         </tr>
         </thead>
@@ -26,6 +27,9 @@
               <span class="label label-primary m-2" ng-bind="tag" ng-repeat="tag in dashboard.tags"></span> {{ dashboard.untagged_name }}
               <span class="label label-default" ng-if="dashboard.is_draft">Unpublished</span>
             </a>
+          </td>
+          <td>
+            {{dashboard.user.name}}
           </td>
           <td>{{ dashboard.created_at | dateTime }}</td>
         </tr>
